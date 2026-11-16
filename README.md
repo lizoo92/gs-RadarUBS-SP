@@ -28,7 +28,8 @@ Como o mapa é construído:
   pode superestimar a oferta, pois não mede distância.
 
 O que o mapa tem:
-- Camadas nomeadas, que podem ser ligadas e desligadas: distritos (UBS por 100 mil habitantes) e pontos das UBS públicas.
+- Camadas nomeadas, que podem ser ligadas e desligadas: mapa base (OpenStreetMap), distritos (UBS por 100 mil habitantes)
+  e pontos das UBS públicas (essa camada já abre ligada).
 - Ao passar o mouse sobre um distrito: população, área (km²), número de UBS, o indicador e a faixa.
 - Nomes dos distritos que aparecem conforme o zoom, com anticolisão automática.
 - Legenda com as 7 faixas, os outliers e os distritos sem UBS, e uma nota dizendo que o mapa mede
@@ -36,6 +37,12 @@ O que o mapa tem:
 - Ranking de distritos ordenável: clique no título da coluna para ordenar.
   Distritos sem UBS aparecem como "sem UBS no distrito", e os outliers com "(outlier)".
 - Aviso nos distritos sem UBS: pode haver cobertura por UBS de distritos vizinhos, e a população flutuante não é contada.
+
+Há também um **mapa por região** (`saidas/mapa_regioes.html`), que agrupa os 96 distritos nas 5 regiões do GeoSampa
+(campo `nm_regiao_05`: Centro, Leste, Norte, Oeste e Sul). O indicador de cada região é recalculado
+somando a população e as UBS dos distritos dela, e não pela média dos distritos. Ao passar o mouse, o mapa mostra
+população, UBS públicas, UBS por 100 mil habitantes, habitantes por UBS e distritos sem UBS.
+A camada de pontos das UBS existe nesse mapa, mas abre desligada.
 
 ## 2. Principais resultados (exploratórios)
 
@@ -50,6 +57,20 @@ Todos os números vêm das saídas dos scripts deste repositório.
   contra 4,3 nos demais 76.
 - Esses distritos de renda alta não são menores nem mais densos que a mediana da cidade.
   Portanto, a área não explica a diferença.
+- Os 17 distritos das classes 0 e 1 (os 4 sem UBS e os 13 da menor faixa) somam cerca de 1,41 milhão de habitantes,
+  ou 12,3% da população dos 96 distritos. Os 4 distritos sem UBS têm 213 mil habitantes.
+
+**Por região** (soma de população e UBS dos distritos de cada região; scripts `17` e `18`):
+
+| Região | Distritos | População | UBS públicas | UBS por 100 mil hab. | Habitantes por UBS | Distritos sem UBS |
+|---|---|---|---|---|---|---|
+| Centro | 8 | 423.536 | 8 | 1,89 | 52.942 | 3 |
+| Oeste | 15 | 1.092.684 | 32 | 2,93 | 34.146 | 1 |
+| Sul | 22 | 3.735.554 | 163 | 4,36 | 22.918 | 0 |
+| Norte | 18 | 2.208.963 | 97 | 4,39 | 22.773 | 0 |
+| Leste | 33 | 3.991.262 | 181 | 4,53 | 22.051 | 0 |
+
+Centro e Oeste têm a menor oferta por habitante. Sul, Norte e Leste ficam próximas entre si, entre 4,36 e 4,53.
 
 **Interpretação (hipótese, não testada):** menor dependência do SUS em áreas de renda mais alta
 pode explicar parte do padrão. Os dados mostram associação, não causa.
@@ -62,7 +83,7 @@ pode explicar parte do padrão. Os dados mostram associação, não causa.
 ├── dados/
 │   ├── bruto/    arquivos baixados das fontes, sem alteração
 │   └── tratado/  tabelas geradas pelos scripts
-├── saidas/       mapa interativo (HTML) e gráficos (PNG)
+├── saidas/       mapas interativos (HTML) e gráficos (PNG)
 ├── requirements.txt
 └── README.md
 ```
@@ -75,6 +96,7 @@ pode explicar parte do padrão. Os dados mostram associação, não causa.
 | `02_ubs_por_distrito.py` | Conta as UBS públicas dentro de cada distrito |
 | `03_cruzamento.py` | Cruza população e UBS, calcula o indicador e define as classes 0 a 8 |
 | `04_mapa.py` | Gera o mapa interativo em `saidas/mapa_ubs_distrito.html` |
+| `04b_mapa_teste_renda.py` | Versão de teste do mapa, com a renda média do responsável no ranking e os rótulos antigos ("mais carente"). Gera `saidas/mapa_teste_renda.html`. O mapa principal é o do `04_mapa.py` |
 | `05_densidade.py` | Densidade demográfica e verificação dos outliers |
 | `06_boxplot.py` | Boxplots (cercas de Tukey) para procurar outros outliers |
 | `07_populacao_ubs.py` | Dispersão população × número de UBS e referência de habitantes por UBS |
@@ -82,6 +104,13 @@ pode explicar parte do padrão. Os dados mostram associação, não causa.
 | `09_inspeciona_renda.py` | Inspeciona o arquivo de renda do IBGE |
 | `10_renda_ubs.py` | Correlação e quartis de renda × UBS; gráfico `renda_x_ubs.png` |
 | `11_renda_alta.py` | Distritos de renda alta, com área, densidade e km² por UBS |
+| `12_distritos_carentes.py` | Lista os distritos das classes 0 e 1 por renda e calcula a população que vive neles |
+| `13_pontos_ubs.py` | Seleciona as UBS públicas (esfera municipal ou estadual) que viram os pontos do mapa |
+| `14_confere_pontos.py` | Confere se a contagem de pontos por distrito bate com `tb_ubs_distrito.csv` |
+| `15_colunas_distritos.py` | Mostra as colunas da camada de distritos do GeoSampa |
+| `16_regioes.py` | Lista os distritos de cada região (`nm_regiao_05`) |
+| `17_indicador_regiao.py` | Calcula o indicador por região (soma de população e UBS) |
+| `18_mapa_regioes.py` | Gera o mapa por região em `saidas/mapa_regioes.html` |
 
 ## 4. Como executar
 
@@ -102,10 +131,12 @@ python codigo/01_populacao.py
 python codigo/02_ubs_por_distrito.py
 python codigo/03_cruzamento.py
 python codigo/04_mapa.py
+python codigo/18_mapa_regioes.py
 ```
 
-Os scripts `05` a `11` são exploratórios e podem ser rodados em qualquer ordem depois do `03`.
-O mapa é salvo em `saidas/mapa_ubs_distrito.html` (abra no navegador).
+Os scripts `04b` e `05` a `17` são exploratórios (testes, inspeção e conferência) e podem ser rodados
+em qualquer ordem depois do `03`. O `18` gera o mapa por região e também só depende do `03`.
+Os mapas são salvos em `saidas/mapa_ubs_distrito.html` (principal) e `saidas/mapa_regioes.html` (abra no navegador).
 O mapa de fundo é do OpenStreetMap, então é preciso estar com internet para ele aparecer.
 
 ## 5. Bibliotecas
@@ -177,6 +208,8 @@ Resumo; o texto completo está no relatório do projeto.
 - O valor é do distrito, e não de cada bairro. A população flutuante não é contada.
 - População do Censo 2022 combinada com camadas de 2025/2026.
 - Efeito de borda: moradores podem usar UBS de distritos vizinhos (não testado).
+- No mapa por região, o indicador é calculado sobre a soma da região e esconde as diferenças entre os distritos dela
+  (por exemplo, 3 dos 8 distritos do Centro não têm nenhuma UBS pública).
 - Poucas UBS por distrito (contagens pequenas): o indicador varia muito com uma UBS a mais ou a menos.
 - A associação com renda é entre distritos, não entre pessoas (falácia ecológica), e a renda é a do responsável.
 
