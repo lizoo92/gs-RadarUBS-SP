@@ -6,6 +6,7 @@ Ideia #4: *onde faltam serviços de saúde*.
 - Grupo: Luiz Fernando de Oliveira Pupo, Victor Cabrini, Tiago Sanches Biscari
 - Vídeo (até 5 min): [preencher link do YouTube]
 - Repositório público no GitHub.
+- **Mapa interativo online:** https://lizoo92.github.io/gs-RadarUBS-SP/ (mapa por região: https://lizoo92.github.io/gs-RadarUBS-SP/regioes.html)
 
 ## 1. O que o projeto faz
 
@@ -84,6 +85,7 @@ pode explicar parte do padrão. Os dados mostram associação, não causa.
 │   ├── bruto/    arquivos baixados das fontes, sem alteração
 │   └── tratado/  tabelas geradas pelos scripts
 ├── saidas/       mapas interativos (HTML) e gráficos (PNG)
+├── docs/         cópia dos dois mapas para o GitHub Pages (index.html e regioes.html)
 ├── requirements.txt
 └── README.md
 ```
@@ -138,6 +140,13 @@ Os scripts `04b` e `05` a `17` são exploratórios (testes, inspeção e confer�
 em qualquer ordem depois do `03`. O `18` gera o mapa por região e também só depende do `03`.
 Os mapas são salvos em `saidas/mapa_ubs_distrito.html` (principal) e `saidas/mapa_regioes.html` (abra no navegador).
 O mapa de fundo é do OpenStreetMap, então é preciso estar com internet para ele aparecer.
+
+Para atualizar o site (GitHub Pages) depois de gerar os mapas de novo, copie os arquivos para a pasta `docs/`:
+
+```
+cp saidas/mapa_ubs_distrito.html docs/index.html
+cp saidas/mapa_regioes.html docs/regioes.html
+```
 
 ## 5. Bibliotecas
 
