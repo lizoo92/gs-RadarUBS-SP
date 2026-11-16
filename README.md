@@ -88,8 +88,8 @@ pode explicar parte do padrão. Os dados mostram associação, não causa.
 Requisitos: Python 3 e Git. Os comandos abaixo são para macOS ou Linux.
 
 ```
-git clone https://github.com/lizoo92/gs-desertos-saude.git
-cd gs-desertos-saude
+git clone https://github.com/lizoo92/gs-RadarUBS-SP.git
+cd gs-RadarUBS-SP
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
